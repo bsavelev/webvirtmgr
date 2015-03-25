@@ -1,4 +1,4 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import patterns, url, include
 from django.conf import settings
 from instance.views import InstanceList
 
@@ -28,3 +28,8 @@ urlpatterns = patterns('',
 urlpatterns += patterns('',
     (r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.STATIC_ROOT}),
 )
+
+urlpatterns += patterns(
+    '',
+    url(r'^s/', include('simple.urls')),
+    )

@@ -1,0 +1,52 @@
+{% extends "simple/base.html" %}
+{% load i18n %}
+{% load staticfiles %}
+{% block title %}{% trans "Create new" %}{% endblock %}
+{% block content %}
+<div class="main col-xs-12 col-sm-9">
+    {% if errors %}
+        {% for error in errors %}
+            <div class="alert alert-danger">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                {{ error }}
+            </div>
+        {% endfor %}
+    {% endif %}
+    <form class="form-horizontal" method="post" role="form" action="">{% csrf_token %}
+        <div class="form-group">
+            <label class="col-sm-3 control-label">{% trans "Name" %}</label>
+
+            <div class="col-sm-6">
+                <input type="text" class="form-control" name="name" placeholder="{% trans "Name" %}"
+                       maxlength="14" required pattern="[a-zA-Z0-9\.\-_]+">
+            </div>
+        </div>
+        <input type="hidden" name="vcpu" value="1">
+        <input type="hidden" name="host_model" value="true">
+        <input type="hidden" name="memory" value="1024">
+        <input type="hidden" name="meta_prealloc" value="false">
+        <input type="hidden" name="meta_base" value="true">
+        <input type="hidden" name="networks" value="default">
+        <input type="hidden" name="virtio" value="true">
+        <div class="form-group">
+            <label class="col-sm-3 control-label">{% trans "HDD" %}</label>
+
+            <div class="col-sm-6">
+                <select name="template" class="form-control">
+                    {% if get_images %}
+                        {% for name in get_images %}
+                            {% if 'template-' in name %}
+                                <option value="{{ name }}">{{ name }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    {% else %}
+                        <option value="">{% trans "None" %}</option>
+                    {% endif %}
+                </select>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary" name="create"
+                value="1">{% trans "Create" %}</button>
+    </form>
+</div>
+{% endblock %}

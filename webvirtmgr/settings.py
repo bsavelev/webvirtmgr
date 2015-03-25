@@ -212,5 +212,6 @@ INSTALLED_APPS = (
     'servers',
     'instance',
     'create',
+    'simple',
     'gunicorn',
 )
