@@ -66,7 +66,7 @@ class CreateInstanceFromTemplate(FormView):
         if data['meta_base']:
             meta_base = True
         if instances:
-            if data['name'] in instances:
+            if name in instances:
                 msg = _("A virtual machine with this name already exists")
                 errors.append(msg)
         if not errors:
@@ -101,7 +101,7 @@ class CreateInstanceFromTemplate(FormView):
                 try:
                     conn.create_instance(name, data['memory'], data['vcpu'], data['host_model'],
                                          uuid, volumes, data['networks'], data['virtio'], data['mac'])
-                    create_instance = Instance(compute=self.compute, name=data['name'], uuid=uuid)
+                    create_instance = Instance(compute=self.compute, name=name, uuid=uuid)
                     create_instance.save()
                 except libvirtError as err:
                     if data['hdd_size']:
