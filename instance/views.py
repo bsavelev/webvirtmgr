@@ -503,7 +503,7 @@ def instance(request, host_id, vname):
                 if conn.get_status() == 1:
                     conn.force_shutdown()
                 try:
-                    instance = Instance.objects.get(compute_id=host_id, name=vname)
+                    instance = Instance.objects.filter(compute_id=host_id, name=vname)
                     instance.delete()
                     if request.POST.get('delete_disk', ''):
                         conn.delete_disk()
