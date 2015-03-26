@@ -12,6 +12,10 @@
             </div>
         {% endfor %}
     {% endif %}
+    <div class="well">
+        <h4>{% trans "Default `root` password is `root`" %}</h4>
+        <h4>{% trans "Default user account `user` with password `user`" %}</h4>
+    </div>
     <form class="form-horizontal" method="post" role="form" action="">{% csrf_token %}
         <div class="form-group">
             <label class="col-sm-3 control-label">{% trans "Name" %}</label>
