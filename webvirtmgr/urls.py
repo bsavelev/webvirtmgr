@@ -1,8 +1,11 @@
 from django.conf.urls import patterns, url, include
 from django.conf import settings
+from django.core.urlresolvers import reverse_lazy
+from django.views.generic import RedirectView
 from instance.views import InstanceList
 
 urlpatterns = patterns('',
+    url(r'^$', RedirectView.as_view(url=reverse_lazy('my_instance_list'))),
     url(r'^$', 'servers.views.index', name='index'),
     url(r'^login/$', 'django.contrib.auth.views.login', {'template_name': 'login.html'}, name='login'),
     url(r'^logout/$', 'django.contrib.auth.views.logout', {'template_name': 'logout.html'}, name='logout'),
