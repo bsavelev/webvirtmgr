@@ -288,7 +288,8 @@ def insts_status(request, host_id):
                           'vcpu': conn.get_instance_vcpu(instance),
                           'uuid': conn.get_uuid(instance),
                           'host': host_id,
-                          'dump': conn.get_instance_managed_save_image(instance)
+                          'dump': conn.get_instance_managed_save_image(instance),
+                          'ip': conn.get_ip(instance),
                           })
 
     data = json.dumps(instances)
@@ -348,7 +349,8 @@ class InstanceList(TemplateView):
                 'uuid': uuid,
                 'memory': conn.get_instance_memory(instance),
                 'vcpu': conn.get_instance_vcpu(instance),
-                'has_managed_save_image': conn.get_instance_managed_save_image(instance)
+                'has_managed_save_image': conn.get_instance_managed_save_image(instance),
+                'ip': conn.get_ip(instance),
             })
         return instance_list
 

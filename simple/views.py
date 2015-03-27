@@ -21,6 +21,8 @@ class MyInstanceList(InstanceList):
         for i, item in enumerate(l):
             line = 'user-%d-' % self.request.user.pk
             if item['name'].startswith(line):
+                if item.get('ip'):
+                    item['port'] = "22%s" % item['ip'].split('.')[3]
                 r.append(item)
         return r
 

@@ -21,6 +21,19 @@ class wvmInstances(wvmConnect):
         inst = self.get_instance(name)
         return inst.info()[0]
 
+    def get_ip(self, name):
+        inst = self.get_instance(name)
+        mac = util.get_xml_path(inst.XMLDesc(0), "/domain/devices/interface/mac/@address")
+        net = util.get_xml_path(inst.XMLDesc(0), "/domain/devices/interface/source/@network")
+        libvirt_net = self.wvm.networkLookupByName(net)
+        ip = ''
+        try:
+            dhcp_info = libvirt_net.DHCPLeases(mac)
+            ip = dhcp_info[0].get('ipaddr', '')
+        except libvirtError:
+            ip = ''
+        return ip
+
     def get_instance_memory(self, name):
         inst = self.get_instance(name)
         mem = util.get_xml_path(inst.XMLDesc(0), "/domain/currentMemory")

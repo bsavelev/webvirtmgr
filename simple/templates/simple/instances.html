@@ -24,7 +24,7 @@
                         <th>{% trans "Status" %}</th>
                         <th>{% trans "VCPUs" %}</th>
                         <th>{% trans "Memory" %}</th>
-                        <th style="width:252px;" colspan="2">{% trans "Action" %}</th>
+                        <th style="width:252px;" colspan="3">{% trans "Action" %}</th>
                     </tr>
                     </thead>
                     <tbody id="tbody">
@@ -45,6 +45,10 @@
 {% endblock %}
 {% block script %}
     <script>
+        function pad (str, max) {
+            str = str.toString();
+            return str.length < max ? pad("0" + str, max) : str;
+        }
         function status() {
             $.getJSON('{% url 'insts_status' host_id %}', function (data) {
                 for (var i = 0; i < data.length; i++) {
@@ -72,9 +76,6 @@
                                 + "<button class='btn btn-sm btn-default' type='submit' name='suspend' title='{% trans "Suspend" %}'>"
                                 + "<span class='glyphicon glyphicon-pause'></span>"
                                 + "</button> "
-                                + "<button class='btn btn-sm btn-default' type='submit' name='managedsave' title='{% trans "Save" %}'>"
-                                + "<span class='glyphicon glyphicon-download-alt'></span>"
-                                + "</button> "
                                 + btn
                                 + "<button class='btn btn-sm btn-default' type='submit' name='destroy' title='{% trans "Force Shutdown" %}' onclick='return confirm('Are you sure?')'>"
                                 + "<span class='glyphicon glyphicon-stop'></span>"
@@ -98,9 +99,6 @@
                                 + "</button> "
                                 + "<button class='btn btn-sm btn-default disabled' title='{% trans "Suspend" %}'>"
                                 + "<span class='glyphicon glyphicon-pause'></span>"
-                                + "</button> "
-                                + "<button class='btn btn-sm btn-default' type='submit' name='managedsave' title='{% trans "Save" %}'>"
-                                + "<span class='glyphicon glyphicon-download-alt'></span>"
                                 + "</button> "
                                 + "<button class='btn btn-sm btn-default disabled' title='{% trans "Shutdown" %}'>"
                                 + "<span class='glyphicon glyphicon-off''></span>"
@@ -128,9 +126,6 @@
                                 + "<button class='btn btn-sm btn-default disabled' title='{% trans "Suspend" %}'>"
                                 + "<span class='glyphicon glyphicon-pause'></span>"
                                 + "</button> "
-                                + "<button class='btn btn-sm btn-default disabled' title='{% trans "Save" %}'>"
-                                + "<span class='glyphicon glyphicon-download-alt'></span>"
-                                + "</button> "
                                 + "<button class='btn btn-sm btn-default disabled' title='{% trans "Shutdown" %}'>"
                                 + "<span class='glyphicon glyphicon-off'></span>"
                                 + "</button> "
@@ -152,6 +147,11 @@
                                     +"</button>"
                                     +"</form>"
                                     +"</td>");
+                    if (data[i]['ip'] != '') {
+                        $(elem).append("<td>port: 22"
+                                               + pad(data[i]['ip'].split('.')[3], 3)
+                                               + "</td>");
+                    }
                 }
                 $('form.form-delete').ajaxForm(function(){
                     window.location.reload();
