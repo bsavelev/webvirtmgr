@@ -220,7 +220,7 @@ class wvmCreate(wvmConnect):
                     </graphics>
                     <console type='pty'/>
                     <video>
-                      <model type='cirrus'/>
+                      <model type='qxl'/>
                     </video>
                     <memballoon model='virtio'/>
                   </devices>
