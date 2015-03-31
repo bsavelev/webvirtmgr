@@ -197,7 +197,7 @@ QEMU_KEYMAPS = ['ar', 'da', 'de', 'de-ch', 'en-gb', 'en-us', 'es', 'et', 'fi',
 QEMU_CONSOLE_TYPES = ['vnc', 'spice']
 
 # default console type
-QEMU_CONSOLE_DEFAULT_TYPE = 'vnc'
+QEMU_CONSOLE_DEFAULT_TYPE = 'spice'
 
 # Installed Apps shouldn't be overridden
 INSTALLED_APPS = (
