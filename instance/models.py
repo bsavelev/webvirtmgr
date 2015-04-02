@@ -1,5 +1,6 @@
 from django.db import models
 from servers.models import Compute
+from vrtManager.instance import wvmInstance
 
 
 class Instance(models.Model):
@@ -14,3 +15,18 @@ class Instance(models.Model):
 
     class Meta:
         unique_together = ('compute', 'name')
+
+    def get_conn(self):
+        if not hasattr(self, '_conn'):
+            conn = wvmInstance(
+                self.compute.hostname,
+                self.compute.login,
+                self.compute.password,
+                self.compute.type,
+                self.name)
+            setattr(self, '_conn', conn)
+        return self._conn
+
+    def start(self):
+        conn = self.get_conn()
+        conn.start()

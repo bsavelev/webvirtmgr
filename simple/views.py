@@ -28,7 +28,7 @@ class MyInstanceList(InstanceList):
             line = 'user-%d-' % self.request.user.pk
             if item['name'].startswith(line):
                 if item.get('ip'):
-                    item['port'] = "22%s" % item['ip'].split('.')[3]
+                    item['port'] = "22%03d" % int(item['ip'].split('.')[3])
                 item['showname'] = '-'.join(item['name'].split('-')[2:])
                 r.append(item)
         return r
@@ -112,6 +112,7 @@ class CreateInstanceFromTemplate(FormView):
                                          uuid, volumes, data['networks'], data['virtio'], data['mac'])
                     create_instance = Instance(compute=self.compute, name=name, uuid=uuid)
                     create_instance.save()
+                    create_instance.start()
                 except libvirtError as err:
                     if data['hdd_size']:
                         conn.delete_volume(volumes.keys()[0])
