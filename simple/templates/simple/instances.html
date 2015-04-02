@@ -24,14 +24,11 @@
                         <th>{% trans "Status" %}</th>
                         <th>{% trans "VCPUs" %}</th>
                         <th>{% trans "Memory" %}</th>
-                        <th style="width:252px;" colspan="3">{% trans "Action" %}</th>
+                        <th>{% trans "Action" %}</th>
+                        <th>{% trans "SSH port" %}</th>
                     </tr>
                     </thead>
                     <tbody id="tbody">
-                    {% for inst in instances|dictsort:"name.lower"|dictsort:"status" %}
-                        <tr id="{{ inst.name }}" class="instance-row">
-                        </tr>
-                    {% endfor %}
                     </tbody>
                 </table>
             </div>
@@ -50,110 +47,8 @@
             return str.length < max ? pad("0" + str, max) : str;
         }
         function status() {
-            $.getJSON('{% url 'insts_status' host_id %}', function (data) {
-                for (var i = 0; i < data.length; i++) {
-                    var elem = '#' + data[i]['name'];
-                    if (data[i]['status'] === 1) {
-                        if (data[i]['dump'] === 1) {
-                            var btn = "<button class='btn btn-sm btn-default' type='submit' name='deletesaveimage' title='{% trans "Delete Save Image" %}'>"
-                                    + "<span class='glyphicon glyphicon-remove'></span>"
-                                    + "</button> ";
-                        } else {
-                            var btn = "<button class='btn btn-sm btn-default' type='submit' name='shutdown' title='{% trans "Shutdown" %}'>"
-                                    + "<span class='glyphicon glyphicon-off'></span>"
-                                    + "</button> ";
-                        }
-                        $(elem).html("<td>" + data[i]['name'] + "</td>"
-                                + "<td><span class='label label-success'>{% trans "Running" %}</span></td>"
-                                + "<td>" + data[i]['vcpu'] + "</td>"
-                                + "<td>" + data[i]['memory'] + "{% trans "MB" %}</td>"
-                                + "<td>"
-                                + "<form action='' method='post'>{% csrf_token %}"
-                                + "<input type='hidden' name='name' value='" + data[i]['name'] + "' />"
-                                + "<button class='btn btn-sm btn-default disabled' title='{% trans "Start" %}'>"
-                                + "<span class='glyphicon glyphicon-play'></span>"
-                                + "</button> "
-                                + "<button class='btn btn-sm btn-default' type='submit' name='suspend' title='{% trans "Suspend" %}'>"
-                                + "<span class='glyphicon glyphicon-pause'></span>"
-                                + "</button> "
-                                + btn
-                                + "<button class='btn btn-sm btn-default' type='submit' name='destroy' title='{% trans "Force Shutdown" %}' onclick='return confirm('Are you sure?')'>"
-                                + "<span class='glyphicon glyphicon-stop'></span>"
-                                + "</button> "
-                                + "<a href='#' class='btn btn-sm btn-default' onclick='open_console(\"" + data[i]['host'] + "-" + data[i]['uuid'] + "\")' title='{% trans "Console" %}'>"
-                                + "<span class='glyphicon glyphicon-align-justify'></span>"
-                                + "</a> "
-                                + "</form>"
-                                + "</td>");
-                    }
-                    if (data[i]['status'] === 3) {
-                        $(elem).html("<td>" + data[i]['name'] + "</td>"
-                                + "<td><span class='label label-warning'>{% trans "Suspend" %}</span></td>"
-                                + "<td>" + data[i]['vcpu'] + "</td>"
-                                + "<td>" + data[i]['memory'] + "{% trans "MB" %}</td>"
-                                + "<td>"
-                                + "<form action='' method='post'>{% csrf_token %}"
-                                + "<input type='hidden' name='name' value='" + data[i]['name'] + "' />"
-                                + "<button class='btn btn-sm btn-default' type='submit' name='resume' title='{% trans "Resume" %}'>"
-                                + "<span class='glyphicon glyphicon-play'></span>"
-                                + "</button> "
-                                + "<button class='btn btn-sm btn-default disabled' title='{% trans "Suspend" %}'>"
-                                + "<span class='glyphicon glyphicon-pause'></span>"
-                                + "</button> "
-                                + "<button class='btn btn-sm btn-default disabled' title='{% trans "Shutdown" %}'>"
-                                + "<span class='glyphicon glyphicon-off''></span>"
-                                + "</button> "
-                                + "<button class='btn btn-sm btn-default disabled' title='{% trans "Force Shutdown" %}'>"
-                                + "<span class='glyphicon glyphicon-stop'></span>"
-                                + "</button> "
-                                + "<button class='btn btn-sm btn-default disabled' title='{% trans "Console" %}'>"
-                                + "<span class='glyphicon glyphicon-align-justify'></span>"
-                                + "</button> "
-                                + "</form>"
-                                + "</td>");
-                    }
-                    if (data[i]['status'] == 5) {
-                        $(elem).html("<td>" + data[i]['name'] + "</td>"
-                                + "<td><span class='label label-danger'>{% trans "Shutoff" %}</span></td>"
-                                + "<td>" + data[i]['vcpu'] + "</td>"
-                                + "<td>" + data[i]['memory'] + "{% trans "MB" %}</td>"
-                                + "<td>"
-                                + "<form action='' method='post'>{% csrf_token %}"
-                                + "<input type='hidden' name='name' value='" + data[i]['name'] + "' />"
-                                + "<button class='btn btn-sm btn-default' type='submit' name='start' title='{% trans "Start" %}'>"
-                                + "<span class='glyphicon glyphicon-play'></span>"
-                                + "</button> "
-                                + "<button class='btn btn-sm btn-default disabled' title='{% trans "Suspend" %}'>"
-                                + "<span class='glyphicon glyphicon-pause'></span>"
-                                + "</button> "
-                                + "<button class='btn btn-sm btn-default disabled' title='{% trans "Shutdown" %}'>"
-                                + "<span class='glyphicon glyphicon-off'></span>"
-                                + "</button> "
-                                + "<button class='btn btn-sm btn-default disabled' title='{% trans "Force Shutdown" %}'>"
-                                + "<span class='glyphicon glyphicon-stop'></span>"
-                                + "</button> "
-                                + "<button class='btn btn-sm btn-default disabled' title='{% trans "Console" %}'>"
-                                + "<span class='glyphicon glyphicon-align-justify'></span>"
-                                + "</button> "
-                                + "</form>"
-                                + "</td>");
-                    }
-                    $(elem).append( "<td>"
-                                    +"<form class='form-delete' method='post' role='form' action='/instance/{{ host_id }}/" + data[i]['name'] + "/'>{% csrf_token %}"
-                                    +"<input type='hidden' name='delete_disk' value='true'>"
-                                    +"<button type='submit' class='btn btn-sm btn-default'"
-                                    +"    name='delete'>"
-                                    +"    <span class='glyphicon glyphicon-trash'></span>"
-                                    +"</button>"
-                                    +"</form>"
-                                    +"</td>");
-                    if (data[i]['ip'] != '') {
-                        $(elem).append("<td>port: 22"
-                                               + pad(data[i]['ip'].split('.')[3], 3)
-                                               + "</td>");
-                    }
-                }
-                $('form.form-delete').ajaxForm(function(){
+            $('#tbody').load('?update=true', function(){
+                $('#form-action').ajaxForm(function(){
                     window.location.reload();
                 });
             });
@@ -172,7 +67,7 @@
             $("#sortTable").tablesorter({
                 ignoreCase: true,
                 sortList: [[1,0], [0,0]],
-                headers: {4: {sorter: false}},
+                headers: {4: {sorter: false}, 5:{sorter: false}},
                 textSorter: {0: $.tablesorter.sortText}
             });
         });

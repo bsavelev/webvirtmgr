@@ -1,0 +1,90 @@
+{% load i18n %}
+{% for inst in instances|dictsort:"showname.lower"|dictsort:"status" %}
+    <tr id="{{ inst.name }}">
+        <td>{{ inst.showname }}</td>
+        <td>{% ifequal inst.status 1 %}
+            <span class="label label-success">{% trans "Running" %}</span>
+        {% endifequal %}
+            {% ifequal inst.status 5 %}
+                {% ifequal inst.has_managed_save_image 1 %}
+                    <span class="label label-warning">{% trans "Saved" %}</span>
+                {% else %}
+                    <span class="label label-danger">{% trans "Shutoff" %}</span>
+                {% endifequal %}
+            {% endifequal %}
+            {% ifequal inst.status 3 %}
+                <span class="label label-warning">{% trans "Suspend" %}</span>
+            {% endifequal %}
+        </td>
+        <td>{{ inst.vcpu }}</td>
+        <td>{{ inst.memory }}{% trans "MB" %}</td>
+        <td>
+            <form action="/instance/{{ host_id }}/{{ inst.name }}/" method="post" role="form" class="form-inline" id="form-action">{% csrf_token %}
+                <input type="hidden" name="name" value="{{ inst.name }}"/>
+                {% ifequal inst.status 5 %}
+                    <button class="btn btn-sm btn-default" type="submit" name="start" title="Start">
+                        <span class="glyphicon glyphicon-play"></span>
+                    </button>
+                    <button class="btn btn-sm btn-default disabled" title="{% trans "Suspend" %}">
+                        <span class="glyphicon glyphicon-pause"></span>
+                    </button>
+                    <button class="btn btn-sm btn-default disabled"
+                            title="{% trans "Force Shutdown" %}">
+                        <span class="glyphicon glyphicon-stop"></span>
+                    </button>
+                    <button class="btn btn-sm btn-default disabled" title="{% trans "Console" %}">
+                        <span class="glyphicon glyphicon-align-justify"></span>
+                    </button>
+                {% endifequal %}
+                {% ifequal inst.status 3 %}
+                    <button class="btn btn-sm btn-default" type="submit" name="resume"
+                            title="{% trans "Resume" %}">
+                        <span class="glyphicon glyphicon-play"></span>
+                    </button>
+                    <button class="btn btn-sm btn-default disabled" title="{% trans "Suspend" %}">
+                        <span class="glyphicon glyphicon-pause"></span>
+                    </button>
+                    <button class="btn btn-sm btn-default disabled" title="{% trans "Shutdown" %}">
+                        <span class="glyphicon glyphicon-off"></span>
+                    </button>
+                    <button class="btn btn-sm btn-default disabled"
+                            title="{% trans "Force Shutdown" %}">
+                        <span class="glyphicon glyphicon-stop"></span>
+                    </button>
+                    <button class="btn btn-sm btn-default disabled" title="{% trans "Console" %}">
+                        <span class="glyphicon glyphicon-align-justify"></span>
+                    </button>
+                {% endifequal %}
+                {% ifequal inst.status 1 %}
+                    <button class="btn btn-sm btn-default disabled" title="{% trans "Start" %}">
+                        <span class="glyphicon glyphicon-play"></span>
+                    </button>
+                    <button class="btn btn-sm btn-default" type="submit" name="suspend"
+                            title="{% trans "Suspend" %}">
+                        <span class="glyphicon glyphicon-pause"></span>
+                    </button>
+                    <button class="btn btn-sm btn-default" type="submit" name="shutdown"
+                            title="{% trans "Shutdown" %}">
+                        <span class="glyphicon glyphicon-off"></span>
+                    </button>
+                    <button class="btn btn-sm btn-default" type="submit" name="destroy"
+                            title="{% trans "Force Shutdown" %}"
+                            onclick="return confirm('Are you sure?')">
+                        <span class="glyphicon glyphicon-stop"></span>
+                    </button>
+                    <a href="#" class="btn btn-sm btn-default"
+                       onclick='open_console("{{ host_id }}-{{ inst.uuid }}")' title="{% trans "Console" %}">
+                        <span class="glyphicon glyphicon-align-justify"></span>
+                    </a>
+                {% endifequal %}
+                <input type='hidden' name='delete_disk' value='true'>
+                <button type='submit' class='btn btn-sm btn-alert' name='delete'>
+                    <span class='glyphicon glyphicon-trash'></span>
+                </button>
+            </form>
+        </td>
+        <td>
+            <a href="ssh://user@buildbot4.i.drweb.ru:{{ inst.port }}">{{ inst.port }}</a>
+        </td>
+    </tr>
+{% endfor %}

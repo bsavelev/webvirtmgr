@@ -15,6 +15,12 @@ from vrtManager.create import wvmCreate
 class MyInstanceList(InstanceList):
     template_name = 'simple/instances.html'
 
+    def get_template_names(self):
+        if self.request.GET.get('update'):
+            return 'simple/instances_table.html'
+        else:
+            return self.template_name
+
     def get_instances(self):
         l = super(MyInstanceList, self).get_instances()
         r = []
@@ -23,6 +29,7 @@ class MyInstanceList(InstanceList):
             if item['name'].startswith(line):
                 if item.get('ip'):
                     item['port'] = "22%s" % item['ip'].split('.')[3]
+                item['showname'] = '-'.join(item['name'].split('-')[2:])
                 r.append(item)
         return r
 
